@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DGS | Client Stories</title>
+      <link rel="icon" type="image/png" href="img/logo.png">   
+    <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #7030EF;
+            --primary-dim: rgba(112,48,239,0.15);
+            --bg: #070709;
+            --border: rgba(255,255,255,0.07);
+            --text-sub: #888;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; cursor:none !important; font-family:'Cabinet Grotesk',sans-serif; }
+
+        body { background:var(--bg); color:#fff; overflow-x:hidden; }
+
+        /* bg blobs */
+        body::before {
+            content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+            background:
+                radial-gradient(ellipse 70% 55% at 15% 5%, rgba(112,48,239,0.14) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 40% at 85% 90%, rgba(112,48,239,0.09) 0%, transparent 65%),
+                radial-gradient(ellipse 40% 30% at 50% 50%, rgba(60,20,120,0.06) 0%, transparent 60%);
+            animation: bgPulse 10s ease-in-out infinite alternate;
+        }
+        @keyframes bgPulse { 0%{opacity:0.6;transform:scale(1)} 100%{opacity:1;transform:scale(1.04)} }
+
+        /* cursor */
+        #cursor { width:7px;height:7px;background:#fff;border-radius:50%;position:fixed;pointer-events:none;z-index:11000;mix-blend-mode:difference;transition:transform .1s; }
+        #cursor-outline { width:34px;height:34px;border:1.5px solid var(--primary);border-radius:50%;position:fixed;pointer-events:none;z-index:10999;transition:width .2s,height .2s,margin .2s; }
+        #cursor.clicked { transform:scale(0.5); }
+
+        .page { max-width:1180px; margin:0 auto; padding:60px 28px 80px; position:relative; z-index:1; }
+
+        /* ── TOP HEADER ── */
+        .hero {
+            display:flex; align-items:center; justify-content:space-between;
+            gap:40px; margin-bottom:70px; flex-wrap:wrap;
+            animation: fadeUp .7s ease both;
+        }
+        .hero-left { flex:1; min-width:280px; }
+        .eyebrow {
+            display:inline-flex; align-items:center; gap:8px;
+            background:rgba(112,48,239,0.1);
+            border:1px solid rgba(112,48,239,0.25);
+            color:#a57ff5; font-size:10px; font-weight:700;
+            letter-spacing:2.5px; text-transform:uppercase;
+            padding:5px 14px; border-radius:100px; margin-bottom:18px;
+        }
+        .eyebrow span { width:5px;height:5px;border-radius:50%;background:#7030EF;animation:blink 1.4s ease-in-out infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+        .hero-left h1 {
+            font-size:clamp(38px,5.5vw,72px);
+            font-weight:900; line-height:1.0; letter-spacing:-2.5px;
+            margin-bottom:14px;
+        }
+        .hero-left h1 em { font-style:normal; color:var(--primary); }
+        .hero-left p { color:var(--text-sub); font-size:15px; line-height:1.6; max-width:380px; }
+
+        .hero-stats {
+            display:flex; gap:32px; flex-wrap:wrap;
+        }
+        .stat-item { text-align:center; }
+        .stat-item .num {
+            font-size:38px; font-weight:900; letter-spacing:-1.5px;
+            background:linear-gradient(135deg,#fff 30%,#a57ff5);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+        }
+        .stat-item .lbl { font-size:11px; color:var(--text-sub); text-transform:uppercase; letter-spacing:1.5px; margin-top:2px; }
+
+        @keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+
+        /* ── LAYOUT: big + small side by side ── */
+        .videos-layout {
+            display:grid;
+            grid-template-columns:1fr 340px;
+            gap:20px;
+            align-items:start;
+            animation: fadeUp .7s .2s ease both;
+        }
+
+        /* LEFT: big featured video */
+        .main-col {
+            display:flex; flex-direction:column; gap:16px;
+        }
+
+        .featured-vid {
+            position:relative; border-radius:22px; overflow:hidden;
+            background:#000;
+            border:1px solid rgba(112,48,239,0.2);
+            aspect-ratio:9/16;
+            max-height:560px;
+            box-shadow:0 0 60px rgba(112,48,239,0.18),0 30px 60px rgba(0,0,0,0.5);
+            transition:box-shadow .4s ease;
+        }
+        .featured-vid:hover { box-shadow:0 0 100px rgba(112,48,239,0.3),0 30px 60px rgba(0,0,0,0.6); }
+        .featured-vid::after {
+            content:'';position:absolute;top:0;left:-100%;width:55%;height:1.5px;
+            background:linear-gradient(90deg,transparent,rgba(150,100,255,0.9),transparent);
+            animation:shimmer 2.8s ease-in-out infinite;
+        }
+        @keyframes shimmer { 0%{left:-60%} 100%{left:160%} }
+        .featured-vid iframe { width:100%;height:100%;border:none;display:block; }
+
+        .unmute-btn {
+            position:absolute;bottom:16px;left:16px;
+            background:rgba(0,0,0,0.55);backdrop-filter:blur(14px);
+            border:1px solid rgba(255,255,255,0.15);
+            color:#fff;padding:9px 18px;border-radius:50px;
+            font-size:12px;font-weight:700;
+            display:flex;align-items:center;gap:7px;
+            transition:.3s;z-index:10;
+        }
+        .unmute-btn:hover { background:rgba(112,48,239,0.8); border-color:var(--primary); }
+        .unmute-btn.hidden { opacity:0; pointer-events:none; }
+
+        /* now playing label */
+        .now-playing {
+            display:flex; align-items:center; gap:10px;
+            background:rgba(255,255,255,0.03);
+            border:1px solid var(--border);
+            border-radius:14px; padding:12px 18px;
+        }
+        .np-dot { width:8px;height:8px;border-radius:50%;background:var(--primary);flex-shrink:0;animation:pulse 1.8s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(112,48,239,0.5)} 50%{box-shadow:0 0 0 6px rgba(112,48,239,0)} }
+        .np-text { font-size:13px;color:#bbb; } .np-text strong { color:#fff;font-weight:700; }
+
+        /* RIGHT: stacked small cards */
+        .side-col { display:flex; flex-direction:column; gap:14px; max-height:620px; overflow-y:auto; padding-right:4px; scrollbar-width:thin; scrollbar-color:rgba(112,48,239,0.3) transparent; }
+        .side-col::-webkit-scrollbar { width:4px; }
+        .side-col::-webkit-scrollbar-track { background:transparent; }
+        .side-col::-webkit-scrollbar-thumb { background:rgba(112,48,239,0.35); border-radius:10px; }
+
+        .side-label {
+            font-size:10px;text-transform:uppercase;letter-spacing:2.5px;
+            color:var(--text-sub);margin-bottom:4px;
+        }
+
+        .v-card {
+            background:rgba(255,255,255,0.025);
+            border-radius:18px;padding:10px;
+            border:1px solid var(--border);
+            transition:.3s ease;
+            display:flex;gap:14px;align-items:center;
+            opacity:0;transform:translateX(20px);
+            position:relative;overflow:hidden;
+        }
+        .v-card.visible { opacity:1;transform:translateX(0); }
+        .v-card:hover { border-color:rgba(112,48,239,0.4);transform:translateY(-3px); box-shadow:0 12px 30px rgba(0,0,0,0.4),0 0 20px rgba(112,48,239,0.1); }
+        .v-card.active { border-color:rgba(112,48,239,0.55); background:rgba(112,48,239,0.07); }
+        .v-card::before {
+            content:'';position:absolute;inset:0;
+            background:linear-gradient(135deg,rgba(112,48,239,0.06),transparent);
+            opacity:0;transition:.3s;
+        }
+        .v-card:hover::before,.v-card.active::before { opacity:1; }
+
+        .thumb-wrap {
+            flex-shrink:0;
+            width:72px;
+            aspect-ratio:9/16;
+            border-radius:12px;overflow:hidden;
+            background:#000;position:relative;
+        }
+        .thumb-wrap iframe { width:100%;height:100%;border:none;display:block;pointer-events:none; }
+        .thumb-overlay {
+            position:absolute;inset:0;z-index:2;
+            display:flex;align-items:center;justify-content:center;
+            background:rgba(0,0,0,0.35);transition:.3s;
+        }
+        .v-card:hover .thumb-overlay { background:rgba(112,48,239,0.25); }
+        .play-btn {
+            width:32px;height:32px;
+            background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);
+            border:1px solid rgba(255,255,255,0.25);border-radius:50%;
+            display:flex;align-items:center;justify-content:center;
+            font-size:11px;transition:.3s;
+        }
+        .v-card:hover .play-btn,.v-card.active .play-btn {
+            background:var(--primary);border-color:var(--primary);
+            box-shadow:0 0 16px rgba(112,48,239,0.6);
+        }
+
+        .card-meta { flex:1; min-width:0; }
+        .card-meta h4 { font-size:14px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+        .card-meta p { font-size:12px;color:var(--text-sub); }
+        .card-stars { display:flex;gap:2px;margin-top:5px; }
+        .card-stars i { color:#f5c518;font-size:10px; }
+
+        /* ── YOU'RE NEXT section ── */
+        .next-section {
+            margin-top:48px;
+            position:relative;
+            border-radius:28px;
+            overflow:hidden;
+            animation: fadeUp .7s .5s ease both;
+        }
+
+        /* animated border glow via pseudo */
+        .next-section::before {
+            content:'';position:absolute;inset:0;border-radius:28px;
+            padding:1px;
+            background:linear-gradient(135deg,
+                rgba(112,48,239,0.6) 0%,
+                rgba(180,130,255,0.15) 40%,
+                rgba(112,48,239,0.05) 60%,
+                rgba(180,130,255,0.5) 100%);
+            -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+            -webkit-mask-composite:xor;mask-composite:exclude;
+            animation:rotateBorder 5s linear infinite;
+        }
+        @keyframes rotateBorder {
+            0%   { background-position:0% 50%; }
+            50%  { background-position:100% 50%; }
+            100% { background-position:0% 50%; }
+        }
+
+        .next-inner {
+            background:linear-gradient(135deg,rgba(112,48,239,0.08) 0%,rgba(10,6,22,0.95) 50%,rgba(112,48,239,0.05) 100%);
+            border:1px solid rgba(112,48,239,0.22);
+            border-radius:28px;
+            padding:48px 52px;
+            display:grid;
+            grid-template-columns:1fr auto;
+            align-items:center;
+            gap:40px;
+            position:relative;
+            overflow:hidden;
+        }
+
+        /* big faded text bg */
+        .next-inner::after {
+            content:'NEXT';
+            position:absolute;right:-20px;top:50%;transform:translateY(-50%);
+            font-size:160px;font-weight:900;letter-spacing:-8px;
+            color:rgba(112,48,239,0.05);pointer-events:none;line-height:1;
+            user-select:none;
+        }
+
+        /* floating orb */
+        .next-orb {
+            position:absolute;top:-60px;left:-60px;
+            width:200px;height:200px;border-radius:50%;
+            background:radial-gradient(circle,rgba(112,48,239,0.18) 0%,transparent 70%);
+            pointer-events:none;
+            animation:orbFloat 6s ease-in-out infinite alternate;
+        }
+        @keyframes orbFloat { 0%{transform:translate(0,0)} 100%{transform:translate(20px,30px)} }
+
+        .next-tag {
+            display:inline-flex;align-items:center;gap:8px;
+            background:rgba(112,48,239,0.12);
+            border:1px solid rgba(112,48,239,0.3);
+            color:#a57ff5;font-size:10px;font-weight:700;
+            letter-spacing:2.5px;text-transform:uppercase;
+            padding:5px 14px;border-radius:100px;margin-bottom:20px;
+        }
+        .next-tag .pulse-dot {
+            width:6px;height:6px;border-radius:50%;background:#a57ff5;
+            animation:blink 1.4s ease-in-out infinite;
+        }
+
+        .next-headline {
+            font-size:clamp(28px,4vw,48px);
+            font-weight:900;letter-spacing:-1.5px;line-height:1.05;
+            margin-bottom:12px;
+        }
+        .next-headline em { font-style:normal;color:var(--primary); }
+
+        .next-sub {
+            font-size:15px;color:#888;line-height:1.6;max-width:440px;margin-bottom:28px;
+        }
+
+        /* trust badges row */
+        .trust-row {
+            display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+        }
+        .trust-badge {
+            display:flex;align-items:center;gap:7px;
+            font-size:12px;color:#aaa;
+        }
+        .trust-badge i { color:#a57ff5;font-size:13px; }
+
+        /* CTA button */
+        .next-cta {
+            display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0;
+        }
+        .cta-btn {
+            display:inline-flex;align-items:center;gap:10px;
+            background:var(--primary);color:#fff;
+            font-size:15px;font-weight:800;
+            padding:16px 32px;border-radius:100px;
+            border:none;
+            box-shadow:0 0 40px rgba(112,48,239,0.45),0 8px 24px rgba(0,0,0,0.4);
+            transition:.3s ease;
+            white-space:nowrap;
+            position:relative;overflow:hidden;
+        }
+        .cta-btn::before {
+            content:'';position:absolute;inset:0;
+            background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);
+            opacity:0;transition:.3s;
+        }
+        .cta-btn:hover { transform:translateY(-3px) scale(1.04);box-shadow:0 0 60px rgba(112,48,239,0.65),0 16px 32px rgba(0,0,0,0.5); }
+        .cta-btn:hover::before { opacity:1; }
+        .cta-btn i { font-size:14px; }
+
+        .cta-note { font-size:11px;color:#555;letter-spacing:0.5px; }
+
+        /* responsive */
+        @media(max-width:900px){
+            .videos-layout { grid-template-columns:1fr; }
+            .featured-vid { max-height:480px; max-width:280px; margin:0 auto; }
+            .v-card { flex-direction:row; }
+            .hero { flex-direction:column; }
+            .next-inner { grid-template-columns:1fr; padding:36px 28px; }
+            .next-inner::after { display:none; }
+        }
+        @media(max-width:520px){
+            .hero-stats { gap:20px; }
+            .stat-item .num { font-size:28px; }
+            .cta-btn { padding:14px 24px; font-size:14px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-outline"></div>
+
+<div class="page">
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-left">
+            <div class="eyebrow"><span></span> Client Stories</div>
+            <h1>What Our<br>Clients <em>Say</em></h1>
+            <p>Real creators. Real results. Yeh woh log hain jinki growth humne khud ki hai.</p>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="num">50+</div>
+                <div class="lbl">Happy Clients</div>
+            </div>
+            <div class="stat-item">
+                <div class="num">5★</div>
+                <div class="lbl">Average Rating</div>
+            </div>
+            <div class="stat-item">
+                <div class="num">100%</div>
+                <div class="lbl">Real Reviews</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="videos-layout">
+
+        <!-- LEFT: big video -->
+        <div class="main-col">
+            <div class="featured-vid">
+                <iframe id="mainYT"
+                    src="https://www.youtube.com/embed/KaDJsb8skMw?autoplay=1&mute=1&loop=1&playlist=KaDJsb8skMw&controls=1&modestbranding=1&playsinline=1&rel=0"
+                    allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <button class="unmute-btn" id="unmuteBtn">
+                    <i class="fas fa-volume-mute" id="volIcon"></i>
+                    <span id="btnText">Unmute</span>
+                </button>
+            </div>
+            <div class="now-playing">
+                <div class="np-dot"></div>
+                <div class="np-text">Now Playing: <strong id="npName">Sanjay Kathuriya</strong></div>
+            </div>
+        </div>
+
+        <!-- RIGHT: stacked cards -->
+        <div class="side-col">
+            <div class="side-label">More Reviews</div>
+
+            <div class="v-card" data-id="IDAKDs6Ux8A" data-name="Client 2" onclick="updateMain('IDAKDs6Ux8A','Client 2',this)">
+                <div class="thumb-wrap">
+                    <iframe src="https://www.youtube.com/embed/IDAKDs6Ux8A?controls=0&modestbranding=1&playsinline=1&rel=0&mute=1" allow="encrypted-media"></iframe>
+                    <div class="thumb-overlay"><div class="play-btn"><i class="fas fa-play"></i></div></div>
+                </div>
+                <div class="card-meta">
+                    <h4>Sandeep Gupta</h4>
+                    <p>YouTube Creator</p>
+                    <div class="card-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="v-card" data-id="HTfqxfT6ngk" data-name="Client 3" onclick="updateMain('HTfqxfT6ngk','Client 3',this)">
+                <div class="thumb-wrap">
+                    <iframe src="https://www.youtube.com/embed/HTfqxfT6ngk?controls=0&modestbranding=1&playsinline=1&rel=0&mute=1" allow="encrypted-media"></iframe>
+                    <div class="thumb-overlay"><div class="play-btn"><i class="fas fa-play"></i></div></div>
+                </div>
+                <div class="card-meta">
+                    <h4>Dr.Jitendar Adhia</h4>
+                    <p>Content Creator</p>
+                    <div class="card-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="v-card" data-id="4ChQxjWdh-Y" data-name="Client 4" onclick="updateMain('4ChQxjWdh-Y','Client 4',this)">
+                <div class="thumb-wrap">
+                    <iframe src="https://www.youtube.com/embed/4ChQxjWdh-Y?controls=0&modestbranding=1&playsinline=1&rel=0&mute=1" allow="encrypted-media"></iframe>
+                    <div class="thumb-overlay"><div class="play-btn"><i class="fas fa-play"></i></div></div>
+                </div>
+                <div class="card-meta">
+                    <h4>Pooja Malhotra</h4>
+                    <p>Digital Partner</p>
+                    <div class="card-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="v-card" data-id="y0wA2XegCk4" data-name="Client 5" onclick="updateMain('y0wA2XegCk4','Client 5',this)">
+                <div class="thumb-wrap">
+                    <iframe src="https://www.youtube.com/embed/y0wA2XegCk4?controls=0&modestbranding=1&playsinline=1&rel=0&mute=1" allow="encrypted-media"></iframe>
+                    <div class="thumb-overlay"><div class="play-btn"><i class="fas fa-play"></i></div></div>
+                </div>
+                <div class="card-meta">
+                    <h4>Vijya Kaushik</h4>
+                    <p>YouTube Creator</p>
+                    <div class="card-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="v-card" data-id="OG0L0iI1NP0" data-name="Client 6" onclick="updateMain('OG0L0iI1NP0','Client 6',this)">
+                <div class="thumb-wrap">
+                    <iframe src="https://www.youtube.com/embed/OG0L0iI1NP0?controls=0&modestbranding=1&playsinline=1&rel=0&mute=1" allow="encrypted-media"></iframe>
+                    <div class="thumb-overlay"><div class="play-btn"><i class="fas fa-play"></i></div></div>
+                </div>
+                <div class="card-meta">
+                    <h4>Vikas Naagru</h4>
+                    <p>Content Creator</p>
+                    <div class="card-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- YOU'RE NEXT -->
+    <div class="next-section">
+        <div class="next-inner">
+            <div class="next-orb"></div>
+
+            <div class="next-left">
+                <div class="next-tag"><span class="pulse-dot"></span> Limited Spots Available</div>
+                <h2 class="next-headline">Could This Be<br><em>Your Story?</em></h2>
+                <p class="next-sub">Join creators who trusted us with their growth — and never looked back. Your testimonial could be right here, next to theirs.</p>
+                <div class="trust-row">
+                    <div class="trust-badge"><i class="fas fa-shield-alt"></i> Proven Results</div>
+                    <div class="trust-badge"><i class="fas fa-bolt"></i> Fast Turnaround</div>
+                    <div class="trust-badge"><i class="fas fa-star"></i> 5-Star Rated</div>
+                </div>
+            </div>
+
+            <div class="next-cta">
+                <button class="cta-btn" onclick="window.open('https://wa.me/','_blank')">
+                    <i class="fas fa-arrow-right"></i> Work With Us
+                </button>
+                <span class="cta-note">Free consultation · No commitment</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const mainYT    = document.getElementById('mainYT');
+    const unmuteBtn = document.getElementById('unmuteBtn');
+    const volIcon   = document.getElementById('volIcon');
+    const btnText   = document.getElementById('btnText');
+    const npName    = document.getElementById('npName');
+
+    function updateMain(id, name, cardEl) {
+        mainYT.src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=0&loop=1&playlist=${id}&controls=1&modestbranding=1&playsinline=1&rel=0`;
+        npName.innerText = name;
+        unmuteBtn.classList.add('hidden');
+        document.querySelectorAll('.v-card').forEach(c => c.classList.remove('active'));
+        cardEl.classList.add('active');
+        window.scrollTo({ top: 0, behavior:'smooth' });
+    }
+
+    let unmuted = false;
+    unmuteBtn.addEventListener('click', () => {
+        if (!unmuted) {
+            mainYT.src = mainYT.src.replace('mute=1','mute=0');
+            unmuted = true;
+            volIcon.className = 'fas fa-volume-up';
+            btnText.innerText = 'Sound On';
+            setTimeout(() => unmuteBtn.classList.add('hidden'), 800);
+        }
+    });
+
+    // scroll reveal
+    const cards = document.querySelectorAll('.v-card');
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach((e, i) => {
+            if (e.isIntersecting) {
+                setTimeout(() => e.target.classList.add('visible'), i * 130);
+                obs.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    cards.forEach(c => obs.observe(c));
+
+    // cursor
+    const cursor  = document.getElementById('cursor');
+    const outline = document.getElementById('cursor-outline');
+    let mx=0,my=0,ox=0,oy=0;
+
+    window.addEventListener('mousemove', e => {
+        mx=e.clientX; my=e.clientY;
+        cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+    });
+    window.addEventListener('mousedown', ()=>cursor.classList.add('clicked'));
+    window.addEventListener('mouseup',   ()=>cursor.classList.remove('clicked'));
+
+    (function tick() {
+        ox+=(mx-ox)*0.12; oy+=(my-oy)*0.12;
+        outline.style.left=(ox-17)+'px'; outline.style.top=(oy-17)+'px';
+        requestAnimationFrame(tick);
+    })();
+
+    document.querySelectorAll('.v-card,.unmute-btn,.next-section,.cta-btn').forEach(el => {
+        el.addEventListener('mouseenter', ()=>{ outline.style.width='54px';outline.style.height='54px';outline.style.marginLeft='-10px';outline.style.marginTop='-10px'; });
+        el.addEventListener('mouseleave', ()=>{ outline.style.width='34px';outline.style.height='34px';outline.style.marginLeft='0';outline.style.marginTop='0'; });
+    });
+</script>
+</body>
+</html>

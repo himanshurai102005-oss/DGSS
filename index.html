@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DGS | Premium Agency</title>
+    <link rel="icon" type="image/x-icon" href="Screenshot 2026-03-20 145338.png">
+    <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #7030EF;
+            --bg: #050505;
+            --border: rgba(255, 255, 255, 0.1);
+            --accent-glow: rgba(112, 48, 239, 0.6);
+            --card-bg: #0c0c0c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* Hide custom cursor on touch devices */
+        @media (pointer: fine) {
+            * { cursor: none !important; }
+            #cursor, #cursor-outline { display: block; }
+        }
+        @media (pointer: coarse) {
+            #cursor, #cursor-outline { display: none !important; }
+        }
+
+        body {
+            background: var(--bg);
+            color: white;
+            font-family: 'General Sans', sans-serif;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* --- CURSOR --- */
+        #cursor {
+            width: 8px; height: 8px; background: #fff; border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 11000;
+            left: 0; top: 0; mix-blend-mode: difference;
+            display: none;
+        }
+        #cursor-outline {
+            width: 35px; height: 35px; border: 2px solid var(--primary); border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 10999;
+            left: 0; top: 0; transition: transform 0.1s ease-out;
+            display: none;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 9998; height: 70px;
+            display: flex; justify-content: space-between; align-items: center; padding: 0 5%;
+        }
+
+        .main-logo { height: 28px; width: auto; transition: 0.3s ease; }
+        .main-logo:hover { filter: drop-shadow(0 0 10px var(--primary)); transform: scale(1.05); }
+
+        .nav-links { display: flex; gap: 10px; list-style: none; align-items: center; }
+        .nav-links li a {
+            color: rgba(255, 255, 255, 0.7); text-decoration: none;
+            font-size: 14px; font-weight: 600; padding: 10px 22px;
+            border-radius: 50px; transition: all 0.3s ease; letter-spacing: 0.2px;
+        }
+        .nav-links li a:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer !important;
+            padding: 8px;
+            z-index: 10001;
+        }
+        .hamburger span {
+            display: block; width: 24px; height: 2px;
+            background: white; border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 70px; left: 0; right: 0;
+            background: rgba(5, 5, 5, 0.97);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 20px 5%;
+            z-index: 9997;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu a {
+            color: rgba(255,255,255,0.8); text-decoration: none;
+            font-size: 16px; font-weight: 600;
+            padding: 14px 20px; border-radius: 14px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .mobile-menu a:hover { background: rgba(112,48,239,0.15); border-color: var(--primary); color: #fff; }
+
+        /* --- HERO --- */
+        .hero {
+            height: 100vh; width: 100%; display: flex; align-items: center;
+            justify-content: center; position: relative; overflow: hidden;
+            background: #000; z-index: 1;
+        }
+
+        .hero-bg-video {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: -1; opacity: 0.5;
+        }
+
+        .hero img {
+            max-height: 45vh;
+            max-width: 85vw;
+            position: relative; z-index: 5;
+            filter: drop-shadow(0 0 50px rgba(112, 48, 239, 0.4));
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        /* --- PLANS & DYNAMIC TEXT --- */
+        .plans {
+            padding: 60px 5%;
+            max-width: 1200px; margin: 0 auto; position: relative; z-index: 6;
+        }
+        
+        .dynamic-headline {
+            text-align: center; font-size: 28px; font-weight: 700;
+            margin-bottom: 40px; color: #fff; letter-spacing: -0.5px;
+            line-height: 1.4;
+        }
+
+        #typed-text { text-shadow: 0 0 15px rgba(255, 255, 255, 0.1); }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .special-offer {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, #0c0c0c, #1a0b33);
+            border: 1px solid var(--primary); border-radius: 20px; padding: 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 8px; transition: 0.3s; text-decoration: none; color: white;
+            gap: 20px; flex-wrap: wrap;
+        }
+        .special-offer:hover { transform: scale(1.01); box-shadow: 0 0 30px rgba(112, 48, 239, 0.3); }
+
+        .special-offer-btn {
+            padding: 13px 28px;
+            background: var(--primary);
+            border-radius: 50px;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 13px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .plan-card {
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 28px;
+            transition: 0.4s ease; height: 100%; text-decoration: none; color: white; display: block;
+        }
+        .plan-card:hover { border-color: var(--primary); transform: translateY(-8px); background: #111; }
+
+        .plan-title { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+        .info-btn { color: var(--primary); font-weight: 700; font-size: 14px; margin-top: 15px; }
+
+        /* --- FOOTER --- */
+        .footer { padding: 60px 5% 40px; background: #030303; border-top: 1px solid #111; position: relative; z-index: 6; }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 40px;
+        }
+        .footer-logo { height: 60px; margin-bottom: 20px; }
+        .footer-h3 { font-size: 16px; margin-bottom: 16px; color: #fff; font-weight: 700; text-transform: uppercase; }
+        .footer-text { color: #888; font-size: 14px; line-height: 1.8; }
+
+        .social-icons { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+        .social-icons a {
+            color: #fff; background: #111; width: 42px; height: 42px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; font-size: 18px;
+            transition: 0.3s; border: 1px solid #222; text-decoration: none;
+        }
+        .social-icons a:hover { background: var(--primary); transform: translateY(-5px); border-color: var(--primary); }
+
+        .float-whatsapp {
+            position: fixed; bottom: 25px; right: 25px; background: #25d366;
+            width: 56px; height: 56px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 26px;
+            color: white; text-decoration: none; z-index: 2000;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            cursor: pointer !important;
+        }
+
+        /* ===== RESPONSIVE BREAKPOINTS ===== */
+
+        /* Tablet */
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .navbar { height: 64px; padding: 0 4%; }
+            .main-logo { height: 24px; }
+
+            .hero img {
+                max-height: 38vh;
+                max-width: 80vw;
+            }
+
+            .plans { padding: 40px 4%; }
+
+            .dynamic-headline {
+                font-size: 20px;
+                margin-bottom: 28px;
+            }
+
+            .plans-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .special-offer {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 24px;
+                gap: 16px;
+            }
+
+            .special-offer h2 { font-size: 20px !important; }
+
+            .special-offer-btn {
+                width: 100%;
+                text-align: center;
+                padding: 14px 20px;
+            }
+
+            .plan-card { padding: 22px; }
+            .plan-title { font-size: 19px; }
+
+            .footer { padding: 40px 4% 30px; }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+
+            .footer-logo { height: 45px; }
+
+            .footer-h3 { font-size: 14px; margin-bottom: 12px; }
+
+            .footer-text { font-size: 13px; }
+
+            .float-whatsapp {
+                width: 50px; height: 50px;
+                bottom: 20px; right: 16px;
+                font-size: 22px;
+            }
+
+            .mobile-menu { top: 64px; }
+        }
+
+        /* Very small screens */
+        @media (max-width: 380px) {
+            .dynamic-headline { font-size: 17px; }
+            .plan-title { font-size: 17px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <div id="cursor-outline"></div>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="imgs/logo.png" alt="DGS Logo" class="main-logo">
+        </div>
+        <ul class="nav-links">  
+            <li><a href="client.html">Guest reviews</a></li>
+        </ul>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- Mobile Dropdown Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="client.html">Guest reviews</a>
+    </div>
+    
+    <main>
+        <!-- HERO -->
+        <section class="hero">
+            <video class="hero-bg-video" autoplay muted loop playsinline>
+                <source src="video/blue-light-waving-background-loop-h264.mp4" type="video/mp4">
+            </video>
+            <img src="imgs/digitallogo white.png" alt="DGS Logo centered">
+        </section>
+
+        <!-- PLANS SECTION -->
+        <section class="plans">
+            <div class="dynamic-headline">
+                Expert's in <span id="typed-text"></span>
+            </div>
+
+            <div class="plans-grid">
+                <a href="offers.html" class="special-offer">
+                    <div>
+                        <h2 style="font-size: 24px; margin-bottom: 6px;">🔥 Special Combo Offer</h2>
+                        <p style="opacity: 0.8; font-size: 14px;">Get the ultimate creator growth package (Podcast + Social + YouTube)</p>
+                    </div>
+                    <div class="special-offer-btn">View Details</div>
+                </a>
+
+                <a href="poadcast.html" class="plan-card">
+                    <div class="plan-title">🎙 Podcast Studio</div>
+                    <p style="color:#888;">Premium 4K recording environment for professional creators.</p>
+                    <div class="info-btn">Get Information →</div>
+                </a>
+
+                <a href="s.html" class="plan-card">
+                    <div class="plan-title">🚀 Social Media</div>
+                    <p style="color:#888;">Viral strategies to scale your personal brand and reach.</p>
+                    <div class="info-btn">Get Information →</div>
+                </a>
+
+                <a href="y.html" class="plan-card">
+                    <div class="plan-title">📺 YouTube Growth</div>
+                    <p style="color:#888;">Algorithm-breaking content and full channel management.</p>
+                    <div class="info-btn">Get Information →</div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div>
+                <img src="imgs/digitallogo white.png" alt="DGS Logo" class="footer-logo">
+                <p class="footer-text">
+                    <b>What We Do</b><br>
+                    From the first shout to the final click, we handle it all.<br><br>
+                    <b>Production:</b> Pro Shooting, Editing, & Podcast Management.<br>
+                    <b>Growth:</b> Social Media & YouTube Channel Handling.<br>
+                    <b>Results:</b> Data-driven Paid & Organic Marketing.
+                </p>
+            </div>
+
+            <div>
+                <h3 class="footer-h3">Services</h3>
+                <p class="footer-text" style="margin-bottom: 10px;">• 4K Production</p>
+                <p class="footer-text" style="margin-bottom: 10px;">• Social Scaling</p>
+                <p class="footer-text">• Viral Scripting</p>
+            </div>
+
+            <div>
+                <h3 class="footer-h3">Office</h3>
+                <p class="footer-text" style="font-size: 13px;">1st floor (Rai medicos), Palam Dabri Road, Near Dashrath Puri Metro, Delhi-110045</p>
+            </div>
+
+            <div>
+                <h3 class="footer-h3">Get In Touch</h3>
+                <p class="footer-text">📩 digitalgrowthservice695@gmail.com</p>
+                <p class="footer-text" style="margin-top:6px;">📞 +91 9211992014</p>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/share/18xcQyAG6f/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/digitalgrowth_service?igsh=MWN4aGlheG0zM3ptag==" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://youtube.com/@digitalgrowthservices?si=qo8bBoVMWJtQ_GxG" target="_blank"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 40px; color: #333; font-size: 11px; border-top: 1px solid #111; padding-top: 20px;">
+            © 2026 DGS AGENCY - BUILDING DIGITAL EMPIRES.
+        </div>
+    </footer>
+
+    <a href="https://wa.me/919211992014" class="float-whatsapp" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Typed.js Library -->
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+
+    <script>
+        // --- HAMBURGER MENU ---
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('open');
+        });
+
+        // Close mobile menu on link click
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('open');
+            });
+        });
+
+        // --- CUSTOM CURSOR (only on non-touch devices) ---
+        if (window.matchMedia('(pointer: fine)').matches) {
+            const cursor = document.getElementById('cursor');
+            const outline = document.getElementById('cursor-outline');
+            cursor.style.display = 'block';
+            outline.style.display = 'block';
+
+            let mouseX = 0, mouseY = 0;
+            let cursorX = 0, cursorY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+            });
+
+            function animate() {
+                let distX = mouseX - cursorX;
+                let distY = mouseY - cursorY;
+                cursorX = cursorX + (distX * 0.15);
+                cursorY = cursorY + (distY * 0.15);
+                outline.style.transform = `translate3d(${cursorX - 17}px, ${cursorY - 17}px, 0)`;
+                requestAnimationFrame(animate);
+            }
+            animate();
+
+            document.querySelectorAll('a').forEach(link => {
+                link.addEventListener('mouseenter', () => {
+                    outline.style.transform += ' scale(1.5)';
+                    outline.style.borderColor = '#fff';
+                });
+                link.addEventListener('mouseleave', () => {
+                    outline.style.transform = outline.style.transform.replace(' scale(1.5)', '');
+                    outline.style.borderColor = 'var(--primary)';
+                });
+            });
+        }
+
+        // --- TYPING EFFECT WITH DYNAMIC COLORS ---
+        var typed = new Typed('#typed-text', {
+            strings: [
+                '<span style="color: #FF0000; text-shadow: 0 0 10px rgba(255,0,0,0.3);">YouTube Growth</span>', 
+                '<span style="color: #E1306C; text-shadow: 0 0 10px rgba(225,48,108,0.3);">Instagram Growth</span>', 
+                '<span style="color: #1877F2; text-shadow: 0 0 10px rgba(24,119,242,0.3);">Facebook Growth</span>'
+            ],
+            typeSpeed: 60,
+            backSpeed: 40,
+            backDelay: 1500,
+            loop: true,
+            contentType: 'html'
+        });
+    </script>
+</body>
+</html>

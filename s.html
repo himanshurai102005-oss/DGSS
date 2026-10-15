@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DGS - Social Media Management</title>
+    <link rel="icon" type="image/x-icon" href="Screenshot 2026-03-20 145338.png">
+    <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { 
+            --primary: #7030EF; 
+            --primary-glow: rgba(112, 48, 239, 0.35);
+            --bg: #050505;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(112, 48, 239, 0.6);
+            --muted: #777;
+            --surface: #0d0d0d;
+        }
+
+        body { background: var(--bg); font-family: 'General Sans', sans-serif; color: #ffffff; overflow-x: hidden; scroll-behavior: smooth; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(8px); }
+            to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); filter: blur(4px); }
+            to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        .header { 
+            animation: slideDown 0.7s cubic-bezier(0.2,1,0.3,1) both;
+            padding: 18px 6%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            background: rgba(5,5,5,0.85); 
+            backdrop-filter: blur(20px); 
+            border-bottom: 1px solid var(--border); 
+            position: sticky; top: 0; z-index: 100; 
+        }
+        .hero-tag { animation: fadeUp 0.6s 0.1s cubic-bezier(0.2,1,0.3,1) both; }
+        .hero h1   { animation: fadeUp 0.7s 0.2s cubic-bezier(0.2,1,0.3,1) both; }
+        .hero p    { animation: fadeUp 0.7s 0.35s cubic-bezier(0.2,1,0.3,1) both; }
+        .hero-btns { animation: fadeUp 0.7s 0.45s cubic-bezier(0.2,1,0.3,1) both; }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            filter: blur(5px);
+            transition: opacity 0.7s cubic-bezier(0.2,1,0.3,1),
+                        transform 0.7s cubic-bezier(0.2,1,0.3,1),
+                        filter 0.7s cubic-bezier(0.2,1,0.3,1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* ── HEADER ── */
+        .header-logo { letter-spacing: -2px; font-weight: 800; font-size: 1.3rem; }
+        .header-logo span { color: var(--primary); }
+        .header-cta {
+            background: var(--primary); color: #fff;
+            padding: 9px 22px; border-radius: 50px;
+            text-decoration: none; font-size: 13px; font-weight: 700;
+            transition: 0.3s; letter-spacing: 0.5px;
+        }
+        .header-cta:hover { opacity: 0.85; transform: translateY(-1px); }
+
+        /* ── HERO ── */
+        .hero { 
+            text-align: center; padding: 120px 5% 100px;
+            background: radial-gradient(ellipse 80% 60% at 50% 0%, #1a0b33 0%, #050505 70%);
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(112,48,239,0.12), transparent 70%);
+            top: -200px; left: 50%; transform: translateX(-50%);
+            pointer-events: none;
+        }
+        .hero-tag {
+            display: inline-block;
+            background: rgba(112,48,239,0.15); border: 1px solid rgba(112,48,239,0.4);
+            color: #a87fff; font-size: 11px; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase;
+            padding: 6px 18px; border-radius: 50px; margin-bottom: 30px;
+        }
+        .hero h1 { font-size: clamp(2.8rem, 7vw, 5.5rem); text-transform: uppercase; font-weight: 800; line-height: 0.95; letter-spacing: -2px; }
+        .hero h1 span { color: var(--primary); text-shadow: 0 0 60px rgba(112, 48, 239, 0.5); }
+        .hero p { color: var(--muted); font-size: 1.15rem; margin-top: 20px; max-width: 600px; margin-inline: auto; line-height: 1.7; }
+        .hero-btns { display: flex; gap: 14px; justify-content: center; margin-top: 40px; flex-wrap: wrap; }
+        .btn-primary { background: var(--primary); color: white; padding: 16px 36px; border-radius: 50px; text-decoration: none; font-weight: 700; transition: 0.3s; font-size: 0.95rem; }
+        .btn-secondary { background: transparent; color: white; padding: 16px 36px; border-radius: 50px; text-decoration: none; font-weight: 600; transition: 0.3s; font-size: 0.95rem; border: 1px solid var(--border); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(112,48,239,0.4); }
+        .btn-secondary:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.04); }
+
+        .section { padding: 90px 7%; position: relative; }
+        .section-label {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--primary); font-size: 11px; font-weight: 700;
+            letter-spacing: 3px; text-transform: uppercase; margin-bottom: 14px;
+        }
+        .section-label::before { content: ''; display: block; width: 20px; height: 1px; background: var(--primary); }
+        .section-title { font-size: clamp(1.8rem, 3.5vw, 2.6rem); margin-bottom: 55px; font-weight: 800; text-transform: uppercase; letter-spacing: -1px; }
+        .section-title span { color: var(--primary); }
+
+        /* ── PLATFORM CARDS ── */
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .platform-card {
+            background: var(--card-bg); height: 240px; border-radius: 24px;
+            text-align: center; border: 1px solid var(--border); cursor: pointer;
+            position: relative; overflow: hidden;
+            transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px;
+        }
+        .platform-card:hover { border-color: var(--border-hover); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(112,48,239,0.15); }
+        .platform-card i { font-size: 2.6rem; margin-bottom: 12px; transition: 0.5s; }
+        .platform-card h3 { font-size: 1.3rem; font-weight: 800; transition: 0.5s; }
+        .platform-card .subtitle { opacity: 0.45; font-size: 13px; margin-top: 8px; transition: 0.5s; }
+        .tap-hint { display: none; position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); font-size: 10px; color: rgba(255,255,255,0.35); letter-spacing: 1px; font-weight: 600; white-space: nowrap; transition: 0.3s; }
+        @media (hover: none) and (pointer: coarse) { .tap-hint { display: block; } }
+        .insta i { color: #E1306C; }
+        .fb i { color: #1877F2; }
+        .in i { color: #0A66C2; }
+        .hover-info {
+            position: absolute; bottom: -100%; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(160deg, #1a0b33 0%, #0a0015 100%);
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 24px 22px; transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+            text-align: left; border-top: 2px solid var(--primary);
+        }
+        .platform-card:hover .hover-info, .platform-card.tapped .hover-info { bottom: 0; }
+        .platform-card:hover i, .platform-card:hover h3, .platform-card:hover .subtitle,
+        .platform-card.tapped i, .platform-card.tapped h3, .platform-card.tapped .subtitle { transform: translateY(-20px); opacity: 0; }
+        .platform-card:hover .tap-hint, .platform-card.tapped .tap-hint { opacity: 0; }
+        .hover-info h4 { color: var(--primary); font-size: 0.95rem; margin-bottom: 14px; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; }
+        .info-rows { display: flex; flex-direction: column; gap: 10px; }
+        .info-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); transition: background 0.2s; }
+        .info-row:hover { background: rgba(112,48,239,0.1); }
+        .info-row-icon { width: 28px; height: 28px; border-radius: 8px; background: rgba(112,48,239,0.2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .info-row-icon i { font-size: 11px; color: var(--primary); margin: 0; opacity: 1 !important; transform: none !important; }
+        .info-row-text { display: flex; flex-direction: column; gap: 1px; }
+        .info-row-label { font-size: 11px; font-weight: 700; color: #fff; letter-spacing: 0.3px; }
+        .info-row-desc { font-size: 10px; color: rgba(255,255,255,0.45); line-height: 1.3; }
+
+        /* ── VIDEO SECTION ── */
+        .video-section { background: var(--surface); }
+        .video-row { display: grid; grid-template-columns: 340px 1fr; gap: 24px; margin-bottom: 28px; align-items: stretch; }
+        .video-row:last-child { margin-bottom: 0; }
+
+        .video-box {
+            position: relative; border-radius: 22px; overflow: hidden;
+            border: 1px solid var(--border); background: #0a0a0a;
+            height: 580px;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+        .video-box:hover { border-color: var(--border-hover); transform: scale(1.01); }
+        .video-box iframe {
+            width: 100%; height: 100%;
+            border: none; display: block;
+            border-radius: 22px;
+        }
+        .video-badge {
+            position: absolute; top: 14px; left: 14px; z-index: 20;
+            padding: 5px 13px; border-radius: 50px; font-size: 10px;
+            font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
+            background: var(--primary); color: #fff;
+            box-shadow: 0 4px 15px rgba(112,48,239,0.5);
+            pointer-events: none;
+        }
+
+        /* ── MUTE BUTTON ── */
+        .mute-btn {
+            position: absolute; bottom: 16px; right: 16px; z-index: 30;
+            width: 42px; height: 42px; border-radius: 50%;
+            background: rgba(10,10,10,0.85);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff; font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.25s;
+            backdrop-filter: blur(8px);
+        }
+        .mute-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.08);
+        }
+        .mute-btn.unmuted {
+            background: rgba(112,48,239,0.3);
+            border-color: rgba(112,48,239,0.6);
+        }
+
+        .video-info-card { display: flex; flex-direction: column; justify-content: center; gap: 22px; padding: 40px 36px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 22px; }
+        .info-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--primary); }
+        .info-tag::before { content: ''; display: block; width: 16px; height: 1px; background: var(--primary); }
+        .info-card-title { font-size: clamp(1.6rem, 2.5vw, 2.2rem); font-weight: 800; line-height: 1.1; letter-spacing: -1px; }
+        .info-card-title span { color: var(--primary); }
+        .info-card-desc { color: var(--muted); font-size: 0.95rem; line-height: 1.75; max-width: 480px; }
+        .info-tags-row { display: flex; flex-wrap: wrap; gap: 10px; }
+        .info-pill { padding: 7px 16px; border-radius: 50px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); color: #ccc; background: rgba(255,255,255,0.03); }
+        .big-views-num { font-size: clamp(4rem, 9vw, 7rem); font-weight: 900; letter-spacing: -4px; line-height: 1; color: #fff; text-shadow: 0 0 60px rgba(112,48,239,0.3); }
+        .big-views-num span { color: var(--primary); }
+        .big-views-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 3px; margin-top: 8px; font-weight: 600; }
+        .tools-section { position: relative; }
+        .tools-divider { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .tools-divider-line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(112,48,239,0.6), transparent); }
+        .tools-divider-line.right { background: linear-gradient(90deg, transparent, rgba(112,48,239,0.6)); }
+        .tools-divider-label { font-size: 9px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(140,90,255,0.9); white-space: nowrap; }
+        .tools-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tool-badge { display: flex; align-items: center; gap: 8px; padding: 5px 13px 5px 5px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.025); position: relative; overflow: hidden; transition: all 0.3s ease; cursor: default; }
+        .tool-badge::after { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.35s; border-radius: 10px; }
+        .tool-badge:hover { transform: translateY(-2px); }
+        .tool-badge:hover::after { opacity: 1; }
+        .tool-pr:hover { box-shadow: 0 0 18px rgba(153,153,255,0.25); border-color: rgba(153,153,255,0.35); }
+        .tool-pr::after { background: radial-gradient(ellipse at 0% 50%, rgba(153,153,255,0.12), transparent 70%); }
+        .tool-ps:hover { box-shadow: 0 0 18px rgba(49,168,255,0.25); border-color: rgba(49,168,255,0.35); }
+        .tool-ps::after { background: radial-gradient(ellipse at 0% 50%, rgba(49,168,255,0.12), transparent 70%); }
+        .tool-ae:hover { box-shadow: 0 0 18px rgba(255,124,0,0.25); border-color: rgba(255,124,0,0.35); }
+        .tool-ae::after { background: radial-gradient(ellipse at 0% 50%, rgba(255,124,0,0.12), transparent 70%); }
+        .tool-da:hover { box-shadow: 0 0 18px rgba(255,198,0,0.25); border-color: rgba(255,198,0,0.35); }
+        .tool-da::after { background: radial-gradient(ellipse at 0% 50%, rgba(255,198,0,0.12), transparent 70%); }
+        .tool-icon-wrap { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; position: relative; z-index: 1; box-shadow: 0 2px 10px rgba(0,0,0,0.4); }
+        .tool-logo-img { width: 22px; height: 22px; object-fit: contain; display: block; }
+        .tool-name { font-size: 12px; font-weight: 600; color: #999; letter-spacing: 0.01em; position: relative; z-index: 1; transition: color 0.3s; }
+        .tool-badge:hover .tool-name { color: #e0e0e0; }
+
+        @media (max-width: 900px) {
+            .video-row { grid-template-columns: 1fr; }
+            .video-box { height: 500px; }
+            .video-info-card { padding: 28px 24px; }
+        }
+
+        /* ── CLIENTS SECTION ── */
+        .clients-section { background: var(--surface); }
+        .clients-stats-bar {
+            display: flex; align-items: center; justify-content: center;
+            flex-wrap: wrap; background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 22px; padding: 30px 40px; margin-bottom: 60px; gap: 0;
+        }
+        .cstat { text-align: center; padding: 0 40px; }
+        .cstat-num {
+            font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 900; letter-spacing: -2px;
+            background: linear-gradient(135deg, #fff 30%, #a87fff 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .cstat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 2.5px; margin-top: 5px; font-weight: 700; }
+        .cstat-divider { width: 1px; height: 44px; background: var(--border); flex-shrink: 0; }
+        .plat-label { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; margin-top: 10px; }
+        .plat-label-line { flex: 1; height: 1px; background: var(--border); }
+        .plat-label-badge { display: inline-flex; align-items: center; gap: 7px; padding: 5px 16px; border-radius: 50px; font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; border: 1px solid; white-space: nowrap; }
+        .plat-insta { background: rgba(225,48,108,0.08); color: #E1306C; border-color: rgba(225,48,108,0.25); }
+        .plat-fb    { background: rgba(24,119,242,0.08); color: #1877F2; border-color: rgba(24,119,242,0.25); }
+        .client-group { margin-bottom: 40px; }
+        .client-group-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-left: 2px; }
+        .client-group-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 8px rgba(112,48,239,0.6); flex-shrink: 0; }
+        .client-group-name { font-size: 11px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.35); }
+        .client-group-line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(112,48,239,0.2), transparent); }
+        .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+        .page-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 20px; overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.2, 1, 0.3, 1);
+            position: relative;
+        }
+        .page-card:hover { border-color: var(--border-hover); transform: translateY(-5px); box-shadow: 0 16px 36px rgba(112,48,239,0.15); }
+        .page-card.is-top { border-color: rgba(112,48,239,0.3); background: rgba(112,48,239,0.04); }
+        .page-card.is-top::after { content: '★'; position: absolute; top: 8px; right: 10px; font-size: 9px; color: #a87fff; opacity: 0.7; z-index: 5; }
+        .card-logo-wrap { width: 100%; display: flex; justify-content: center; padding: 18px 18px 10px; }
+        .card-logo {
+            width: 52px; height: 52px; border-radius: 15px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 900; color: #fff; letter-spacing: -0.5px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4); position: relative; flex-shrink: 0;
+        }
+        .card-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; position: absolute; inset: 0; }
+        .card-body { padding: 0 12px 14px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 5px; }
+        .card-handle { font-size: 11.5px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .card-niche { font-size: 9.5px; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 3px; }
+        .card-niche i { font-size: 7px; color: var(--primary); }
+        .card-divider { width: 100%; height: 1px; background: var(--border); margin: 3px 0; }
+        .card-stat-row { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 4px; }
+        .card-stat-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .card-stat-num { font-size: 14px; font-weight: 900; color: #fff; letter-spacing: -0.5px; line-height: 1; }
+        .card-stat-num.big { color: #a87fff; font-size: 15px; }
+        .card-growing { display: inline-flex; align-items: center; gap: 3px; font-size: 8.5px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: rgba(112,48,239,0.9); background: rgba(112,48,239,0.1); border: 1px solid rgba(112,48,239,0.2); border-radius: 50px; padding: 3px 7px; }
+        .fb-section { margin-top: 50px; }
+        @media (max-width: 900px) {
+            .clients-stats-bar { padding: 20px 10px; }
+            .cstat { padding: 0 14px; }
+            .cstat-divider { display: none; }
+            .pages-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+        }
+
+        /* ── CTA ── */
+        .cta { padding: 120px 5%; text-align: center; background: radial-gradient(ellipse 80% 70% at 50% 100%, #1a0b33 0%, #050505 70%); }
+        .cta h2 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: -1px; }
+        .cta h2 span { color: var(--primary); }
+        .cta p { color: var(--muted); margin-bottom: 40px; font-size: 1rem; }
+        .book-btn { background: var(--primary); color: white; padding: 18px 52px; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.4s; font-size: 1rem; letter-spacing: 0.5px; }
+        .book-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(112,48,239,0.4); }
+
+        footer { padding: 36px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: var(--muted); border-top: 1px solid var(--border); font-size: 12px; letter-spacing: 0.5px; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <h2 class="header-logo">DGS <span>SOCIAL</span></h2>
+        <a href="https://wa.me/919211992014?text=Hello%20DGS%20Team" class="header-cta">Book a Call ↗</a>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-tag"></div>
+        <h1>GO <span>VIRAL</span><br>EVERYWHERE</h1>
+        <p>You create the content — we handle the rest. Complete social media management made simple</p>
+        <div class="hero-btns">
+            <a href="https://wa.me/919211992014?text=Hello%20DGS%20Team" class="btn-primary">Start Growing →</a>
+            <a href="#videos" class="btn-secondary">Our Work ↓</a>
+        </div>
+    </section>
+
+    <!-- 01. PLATFORMS -->
+    <section class="section">
+        <div class="section-label reveal">01 — Platforms</div>
+        <h2 class="section-title reveal reveal-delay-1">Choose Your <span>Platform</span></h2>
+        <div class="grid-3">
+            <div class="platform-card insta reveal reveal-delay-1" onclick="handleTap(this)">
+                <i class="fab fa-instagram"></i>
+                <h3>Instagram</h3>
+                <p class="subtitle">Reels & Aesthetic Growth</p>
+                <span class="tap-hint">TAP TO OPEN ↑</span>
+                <div class="hover-info">
+                    <h4>IG Strategy</h4>
+                    <div class="info-rows">
+                        <div class="info-row"><div class="info-row-icon"><i class="fas fa-bolt"></i></div><div class="info-row-text"><span class="info-row-label">Hook Strategy</span><span class="info-row-desc">Scroll-stopping openings in 3 sec</span></div></div>
+                        <div class="info-row"><div class="info-row-icon"><i class="fas fa-music"></i></div><div class="info-row-text"><span class="info-row-label">Trend Mapping</span><span class="info-row-desc">Weekly viral audio & trend research</span></div></div>
+                        <div class="info-row"><div class="info-row-icon"><i class="fas fa-id-card"></i></div><div class="info-row-text"><span class="info-row-label">Aesthetic Grid</span><span class="info-row-desc">Clean, premium brand visuals</span></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="platform-card fb reveal reveal-delay-2" onclick="handleTap(this)">
+                <i class="fab fa-facebook"></i>
+                <h3>Facebook</h3>
+                <p class="subtitle">Community & Ads Scale</p>
+                <span class="tap-hint">TAP TO OPEN ↑</span>
+                <div class="hover-info">
+                    <h4>FB Mastery</h4>
+                    <div class="info-rows">
+                        <div class="info-row"><div class="info-row-icon"><i class="fas fa-ad"></i></div><div class="info-row-text"><span class="info-row-label">Meta Ads</span><span class="info-row-desc">High-converting campaigns for results</span></div></div>
+                        <div class="info-row"><div class="info-row-icon"><i class="fas fa-users"></i></div><div class="info-row-text"><span class="info-row-label">Community</span><span class="info-row-desc">Loyal & engaged audience building</span></div></div>
+                        <div class="info-row"><div class="info-row-icon"><i class="fas fa-chart-line"></i></div><div class="info-row-text"><span class="info-row-label">Lead Gen</span><span class="info-row-desc">Smart systems for quality leads</span></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="platform-card in reveal reveal-delay-3" onclick="handleTap(this)">
+                <i class="fab fa-linkedin"></i>
+                <h3>LinkedIn</h3>
+                <p class="subtitle">Personal Branding & B2B</p>
+                <span class="tap-hint">TAP TO OPEN ↑</span>
+                <div class="hover-info">
+                    <h4>LI Branding</h4>
+                    <div class="info-rows">
+                        <div class="info-row"><div class="info-row-icon"><i class="fas fa-pen-nib"></i></div><div class="info-row-text"><span class="info-row-label">Authority Content</span><span class="info-row-desc">Posts that build trust & credibility</span></div></div>
+                        <div class="info-row"><div class="info-row-icon"><i class="fas fa-search"></i></div><div class="info-row-text"><span class="info-row-label">Profile SEO</span><span class="info-row-desc">Optimized for maximum reach</span></div></div>
+                        <div class="info-row"><div class="info-row-icon"><i class="fas fa-handshake"></i></div><div class="info-row-text"><span class="info-row-label">B2B Networking</span><span class="info-row-desc">Generate quality business leads</span></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 02. VIDEO GRID -->
+    <section class="section video-section" id="videos">
+        <div class="section-label reveal">02 — Our Work</div>
+        <h2 class="section-title reveal reveal-delay-1">The <span>Edit</span> Magic</h2>
+
+        <!-- Video Row 1 -->
+        <div class="video-row reveal">
+            <div class="video-box">
+                <span class="video-badge">Editing Video</span>
+                <iframe
+                    id="yt1"
+                    src="https://www.youtube.com/embed/_lLdDwTwDdA?autoplay=1&mute=1&rel=0&modestbranding=1&loop=1&playlist=_lLdDwTwDdA&enablejsapi=1"
+                    title="YouTube Short 1"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy">
+                </iframe>
+                <button class="mute-btn" onclick="toggleMute(this, 'yt1')" title="Toggle sound">
+                    <i class="fas fa-volume-mute"></i>
+                </button>
+            </div>
+            <div class="video-info-card">
+                <div class="info-tag">Instagram Reel</div>
+                <div class="info-card-title">Professional Editing,<br><span>For Every Video</span></div>
+                <p class="info-card-desc">Smooth cuts, clean transitions, and cinematic visuals that make your content stand out.</p>
+                <div class="info-tags-row"><span class="info-pill">⚡ Fast Cuts</span><span class="info-pill">🎵 Trending Audio</span><span class="info-pill">🎬 B-Rolls</span></div>
+                <div class="tools-section">
+                    <div class="tools-divider"><div class="tools-divider-line"></div><span class="tools-divider-label">⚙&nbsp; Edited With</span><div class="tools-divider-line right"></div></div>
+                    <div class="tools-grid">
+                        <div class="tool-badge tool-pr"><div class="tool-icon-wrap" style="background:#00005B;"><img src="logos/premiere.png" alt="Pr" class="tool-logo-img" onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:900;color:#9999FF;\'>Pr</span>'"></div><span class="tool-name">Premiere Pro</span></div>
+                        <div class="tool-badge tool-ps"><div class="tool-icon-wrap" style="background:#001D34;"><img src="logos/photoshop.png" alt="Ps" class="tool-logo-img" onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:900;color:#31A8FF;\'>Ps</span>'"></div><span class="tool-name">Photoshop</span></div>
+                        <div class="tool-badge tool-ae"><div class="tool-icon-wrap" style="background:#1A0A00;"><img src="logos/aftereffects.png" alt="Ae" class="tool-logo-img" onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:900;color:#FF7C00;\'>Ae</span>'"></div><span class="tool-name">After Effects</span></div>
+                        <div class="tool-badge tool-da"><div class="tool-icon-wrap" style="background:#1A1A2E;"><img src="logos/davinci.png" alt="Da" class="tool-logo-img" onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:900;color:#FFC600;\'>Da</span>'"></div><span class="tool-name">DaVinci Resolve</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Row 2 -->
+        <div class="video-row reveal">
+            <div class="video-box">
+                <span class="video-badge">Editing Video</span>
+                <iframe
+                    id="yt2"
+                    src="https://www.youtube.com/embed/goHiIpHNX5o?autoplay=1&mute=1&rel=0&modestbranding=1&loop=1&playlist=goHiIpHNX5o&enablejsapi=1"
+                    title="YouTube Short 2"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy">
+                </iframe>
+                <button class="mute-btn" onclick="toggleMute(this, 'yt2')" title="Toggle sound">
+                    <i class="fas fa-volume-mute"></i>
+                </button>
+            </div>
+            <div class="video-info-card">
+                <div class="info-card-title">Creative Video Editing,<br><span>That Grabs Attention</span></div>
+                <p class="info-card-desc">Fast pacing, smooth transitions, and clean visuals made to keep viewers engaged.</p>
+                <div class="info-tags-row"><span class="info-pill">🎨 Color Grading</span><span class="info-pill">✍️ Typography</span><span class="info-pill">🔄 Transitions</span></div>
+                <div class="tools-section">
+                    <div class="tools-divider"><div class="tools-divider-line"></div><span class="tools-divider-label">⚙&nbsp; Edited With</span><div class="tools-divider-line right"></div></div>
+                    <div class="tools-grid">
+                        <div class="tool-badge tool-pr"><div class="tool-icon-wrap" style="background:#00005B;"><img src="logos/premiere.png" alt="Pr" class="tool-logo-img" onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:900;color:#9999FF;\'>Pr</span>'"></div><span class="tool-name">Premiere Pro</span></div>
+                        <div class="tool-badge tool-ps"><div class="tool-icon-wrap" style="background:#001D34;"><img src="logos/photoshop.png" alt="Ps" class="tool-logo-img" onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:900;color:#31A8FF;\'>Ps</span>'"></div><span class="tool-name">Photoshop</span></div>
+                        <div class="tool-badge tool-ae"><div class="tool-icon-wrap" style="background:#1A0A00;"><img src="logos/aftereffects.png" alt="Ae" class="tool-logo-img" onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:900;color:#FF7C00;\'>Ae</span>'"></div><span class="tool-name">After Effects</span></div>
+                        <div class="tool-badge tool-da"><div class="tool-icon-wrap" style="background:#1A1A2E;"><img src="logos/davinci.png" alt="Da" class="tool-logo-img" onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:900;color:#FFC600;\'>Da</span>'"></div><span class="tool-name">DaVinci Resolve</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-label reveal" style="margin-top: 60px;">03 — Our Work</div>
+        <h2 class="section-title reveal reveal-delay-1">The <span>Viral</span> Reel</h2>
+
+        <!-- Video Row 3 -->
+        <div class="video-row reveal">
+            <div class="video-box">
+                <span class="video-badge">Reel</span>
+                <video
+                    id="yt3"
+                    src="video/video1mp.4.mp4"
+                    muted
+                    playsinline
+                    loop
+                    preload="metadata"
+                    style="width:100%;height:100%;object-fit:cover;border-radius:22px;">
+                </video>
+                <button class="mute-btn" onclick="toggleMuteVideo(this, 'yt3')" title="Unmute">
+                    <i class="fas fa-volume-mute"></i>
+                </button>
+            </div>
+            <div class="video-info-card">
+                <div class="info-tag">Instagram Reel</div>
+                <div class="info-card-title">Built for Reach,<br><span>Edited to Perform</span></div>
+                <p class="info-card-desc">High-retention strategy with sharp cuts, clean visuals, and strong pacing — boosting reach, engagement, and reel performance.</p>
+                <div style="margin-top: 10px;"><div class="big-views-num">7.8<span>M</span></div><div class="big-views-label">Total Views</div></div>
+            </div>
+        </div>
+
+        <!-- Video Row 5 — NEW ✅ -->
+        <div class="video-row reveal">
+            <div class="video-box">
+                <span class="video-badge">Reel</span>
+                <iframe
+                    id="yt5"
+                    src="https://www.youtube.com/embed/hvwtMBREl-Q?autoplay=1&mute=1&rel=0&modestbranding=1&loop=1&playlist=hvwtMBREl-Q&enablejsapi=1"
+                    title="YouTube Short 5"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy">
+                </iframe>
+                <button class="mute-btn" onclick="toggleMute(this, 'yt5')" title="Toggle sound">
+                    <i class="fas fa-volume-mute"></i>
+                </button>
+            </div>
+            <div class="video-info-card">
+                <div class="info-tag">Instagram Reel</div>
+                <div class="info-card-title">Viral Content,<br><span>Massive Reach</span></div>
+                <p class="info-card-desc">Hook-driven editing with tight pacing, trending audio, and cinematic visuals — engineered to push reach through the algorithm.</p>
+                <div style="margin-top: 10px;"><div class="big-views-num">5.5<span>M</span></div><div class="big-views-label">Total Views</div></div>
+            </div>
+        </div>
+
+        <!-- Video Row 4 -->
+        <div class="video-row reveal">
+            <div class="video-box">
+                <span class="video-badge">Reel</span>
+                <iframe
+                    id="yt4"
+                    src="https://www.youtube.com/embed/wEeJ3ILZmOs?autoplay=1&mute=1&rel=0&modestbranding=1&loop=1&playlist=wEeJ3ILZmOs&enablejsapi=1"
+                    title="YouTube Short 4"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy">
+                </iframe>
+                <button class="mute-btn" onclick="toggleMute(this, 'yt4')" title="Toggle sound">
+                    <i class="fas fa-volume-mute"></i>
+                </button>
+            </div>
+            <div class="video-info-card">
+                <div class="info-tag">Instagram Reel</div>
+                <div class="info-card-title">High Reach,<br><span>Smooth Editing</span></div>
+                <p class="info-card-desc">High-retention strategy with sharp cuts, clean visuals, and strong pacing — boosting reach, engagement, and reel performance.</p>
+                <div style="margin-top: 10px;"><div class="big-views-num">54<span>K</span></div><div class="big-views-label">Total Views</div></div>
+            </div>
+        </div>
+
+        
+
+    </section>
+
+    <!-- 04. CLIENTS -->
+    <section class="section clients-section" id="clients">
+        <div class="section-label reveal">04 — Clients</div>
+        <h2 class="section-title reveal reveal-delay-1">Pages We <span>Manage</span></h2>
+
+        <div class="clients-stats-bar reveal reveal-delay-2">
+            <div class="cstat"><div class="cstat-num">13+</div><div class="cstat-label">Pages Managed</div></div>
+            <div class="cstat-divider"></div>
+            <div class="cstat"><div class="cstat-num">420K+</div><div class="cstat-label">Total Followers</div></div>
+            <div class="cstat-divider"></div>
+            <div class="cstat"><div class="cstat-num">100M+</div><div class="cstat-label">Views Generated</div></div>
+            <div class="cstat-divider"></div>
+            <div class="cstat"><div class="cstat-num">100%</div><div class="cstat-label">Client Retention</div></div>
+        </div>
+
+        <!-- ── INSTAGRAM ── -->
+        <div class="plat-label reveal">
+            <div class="plat-label-line"></div>
+            <span class="plat-label-badge plat-insta"><i class="fab fa-instagram"></i> Instagram</span>
+            <div class="plat-label-line"></div>
+        </div>
+
+        <div class="client-group reveal reveal-delay-1">
+            <div class="client-group-header">
+                <div class="client-group-dot"></div>
+                <span class="client-group-name">Aadi Insights</span>
+                <div class="client-group-line"></div>
+            </div>
+            <div class="pages-grid">
+                <div class="page-card">
+                    <div class="card-logo-wrap">
+                        <div class="card-logo" style="background:linear-gradient(135deg,#7030EF,#a87fff);">
+                            <img src="imgs/adi.jpeg" alt="">AI
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-handle">@aadi_insight</div>
+                        <div class="card-niche"><i class="fas fa-lightbulb"></i> Knowledge</div>
+                        <div class="card-divider"></div>
+                        <div class="card-stat-row">
+                            <span class="card-stat-label">Following</span>
+                            <div class="card-growing"><i class="fas fa-arrow-up"></i> Growing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="client-group reveal reveal-delay-2">
+            <div class="client-group-header">
+                <div class="client-group-dot"></div>
+                <span class="client-group-name">Laxmi Singh</span>
+                <div class="client-group-line"></div>
+            </div>
+            <div class="pages-grid">
+                <div class="page-card is-top">
+                    <div class="card-logo-wrap">
+                        <div class="card-logo" style="background:linear-gradient(135deg,#56CCF2,#2F80ED);">
+                            <img src="imgs/laxmitalk.jpeg" alt="">LT
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-handle">@laxmi_talks</div>
+                        <div class="card-niche"><i class="fas fa-microphone"></i> Business</div>
+                        <div class="card-divider"></div>
+                        <div class="card-stat-row">
+                            <span class="card-stat-label">Following</span>
+                            <span class="card-stat-num big">3.8K</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-card">
+                    <div class="card-logo-wrap">
+                        <div class="card-logo" style="background:linear-gradient(135deg,#11998e,#38ef7d);">
+                            <img src="imgs/laxmisingh.jpeg" alt="">LS
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-handle">@laxmisingh</div>
+                        <div class="card-niche"><i class="fas fa-spa"></i> Yoga</div>
+                        <div class="card-divider"></div>
+                        <div class="card-stat-row">
+                            <span class="card-stat-label">Following</span>
+                            <span class="card-stat-num">3.6K</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="client-group reveal reveal-delay-3">
+            <div class="client-group-header">
+                <div class="client-group-dot"></div>
+                <span class="client-group-name">Vrinda Wellness</span>
+                <div class="client-group-line"></div>
+            </div>
+            <div class="pages-grid">
+                <div class="page-card is-top">
+                    <div class="card-logo-wrap">
+                        <div class="card-logo" style="background:linear-gradient(135deg,#eb5757,#9B51E0);">
+                            <img src="imgs/will.jpeg" alt="">VW
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-handle">@vrinda_wellness</div>
+                        <div class="card-niche"><i class="fas fa-leaf"></i> Wellness</div>
+                        <div class="card-divider"></div>
+                        <div class="card-stat-row">
+                            <span class="card-stat-label">Following</span>
+                            <span class="card-stat-num big">45.1K</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="client-group reveal reveal-delay-1">
+            <div class="client-group-header">
+                <div class="client-group-dot"></div>
+                <span class="client-group-name">Jairam Yoga</span>
+                <div class="client-group-line"></div>
+            </div>
+            <div class="pages-grid">
+                <div class="page-card is-top">
+                    <div class="card-logo-wrap">
+                        <div class="card-logo" style="background:linear-gradient(135deg,#E1306C,#833AB4);">
+                            <img src="imgs/jairam.jpeg" alt="">JY
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-handle">@jairamyoga</div>
+                        <div class="card-niche"><i class="fas fa-spa"></i> Yoga</div>
+                        <div class="card-divider"></div>
+                        <div class="card-stat-row">
+                            <span class="card-stat-label">Following</span>
+                            <span class="card-stat-num big">220K</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-card">
+                    <div class="card-logo-wrap">
+                        <div class="card-logo" style="background:linear-gradient(135deg,#f77737,#fcaf45);">
+                            <img src="imgs/yogi.jpeg" alt="">YM
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-handle">@yogi_mohan</div>
+                        <div class="card-niche"><i class="fas fa-dumbbell"></i> personal brand</div>
+                        <div class="card-divider"></div>
+                        <div class="card-stat-row">
+                            <span class="card-stat-label">Following</span>
+                            <span class="card-stat-num">16K</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-card">
+                    <div class="card-logo-wrap">
+                        <div class="card-logo" style="background:linear-gradient(135deg,#7030EF,#a87fff);">
+                            <img src="imgs/jairam2.jpeg" alt="">JY2
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-handle">@jairamyoga2</div>
+                        <div class="card-niche"><i class="fas fa-spa"></i> Yoga</div>
+                        <div class="card-divider"></div>
+                        <div class="card-stat-row">
+                            <span class="card-stat-label">Following</span>
+                            <span class="card-stat-num">2K</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-card">
+                    <div class="card-logo-wrap">
+                        <div class="card-logo" style="background:linear-gradient(135deg,#11998e,#38ef7d);">
+                            <img src="imgs/fit.jpeg" alt="">FW
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-handle">@fitwithyogi</div>
+                        <div class="card-niche"><i class="fas fa-fire"></i> Fitness</div>
+                        <div class="card-divider"></div>
+                        <div class="card-stat-row">
+                            <span class="card-stat-label">Following</span>
+                            <span class="card-stat-num">1.7K</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-card">
+                    <div class="card-logo-wrap">
+                        <div class="card-logo" style="background:linear-gradient(135deg,#6FCF97,#219653);">
+                            <img src="imgs/yogitalk.jpeg" alt="">YT
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-handle">@yogi_talks</div>
+                        <div class="card-niche"><i class="fas fa-spa"></i> Mindfulness</div>
+                        <div class="card-divider"></div>
+                        <div class="card-stat-row">
+                            <span class="card-stat-label">Following</span>
+                            <span class="card-stat-num">910</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-card">
+                    <div class="card-logo-wrap">
+                        <div class="card-logo" style="background:linear-gradient(135deg,#2D9CDB,#1a5276);">
+                            <img src="imgs/jairam2.jpeg" alt="">JT
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-handle">@jairamyogateam</div>
+                        <div class="card-niche"><i class="fas fa-users"></i> Community</div>
+                        <div class="card-divider"></div>
+                        <div class="card-stat-row">
+                            <span class="card-stat-label">Following</span>
+                            <div class="card-growing"><i class="fas fa-arrow-up"></i> Growing</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-card">
+                    <div class="card-logo-wrap">
+                        <div class="card-logo" style="background:linear-gradient(135deg,#eb5757,#b91c1c);">
+                            <img src="imgs/swa.jpeg" alt="">SJ
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-handle">@swasth_jiwan</div>
+                        <div class="card-niche"><i class="fas fa-leaf"></i> Wellness</div>
+                        <div class="card-divider"></div>
+                        <div class="card-stat-row">
+                            <span class="card-stat-label">Following</span>
+                            <div class="card-growing"><i class="fas fa-arrow-up"></i> Growing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── FACEBOOK ── -->
+        <div class="fb-section">
+            <div class="plat-label reveal">
+                <div class="plat-label-line"></div>
+                <span class="plat-label-badge plat-fb"><i class="fab fa-facebook"></i> Facebook</span>
+                <div class="plat-label-line"></div>
+            </div>
+            <div class="client-group reveal reveal-delay-1">
+                <div class="client-group-header">
+                    <div class="client-group-dot"></div>
+                    <span class="client-group-name">Jairam Yoga</span>
+                    <div class="client-group-line"></div>
+                </div>
+                <div class="pages-grid">
+                    <div class="page-card is-top">
+                        <div class="card-logo-wrap">
+                            <div class="card-logo" style="background:linear-gradient(135deg,#1877F2,#0d5dbf);">
+                                <img src="imgs/jairam.jpeg" alt="">JY
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-handle">jairaamyoga</div>
+                            <div class="card-niche"><i class="fas fa-spa"></i> Yoga</div>
+                            <div class="card-divider"></div>
+                            <div class="card-stat-row">
+                                <span class="card-stat-label">Following</span>
+                                <span class="card-stat-num big">172K</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-card">
+                        <div class="card-logo-wrap">
+                            <div class="card-logo" style="background:linear-gradient(135deg,#1877F2,#a78bfa);">
+                                <img src="imgs/fb.jpeg" alt="">MM
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-handle">manmohanyogi</div>
+                            <div class="card-niche"><i class="fas fa-spa"></i> Yoga</div>
+                            <div class="card-divider"></div>
+                            <div class="card-stat-row">
+                                <span class="card-stat-label">Following</span>
+                                <span class="card-stat-num">13K</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta reveal">
+        <h2>READY TO <span>DOMINATE?</span></h2>
+        <p>Aaj hi join karo 50+ brands ke saath jo already viral ho rahe hain.</p>
+        <a href="https://wa.me/919211992014?text=Hello%20DGS%20Team" class="book-btn">Start Your Journey →</a>
+    </section>
+
+    <footer>
+        <span>DGS AGENCY — Building Digital Empires</span>
+        <span>© 2026 All Rights Reserved</span>
+    </footer>
+
+    <script>
+        /* SCROLL REVEAL */
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+            });
+        }, { threshold: 0.12 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        /* MOBILE TAP */
+        function handleTap(card) {
+            const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+            if (!isTouchDevice) return;
+            const wasOpen = card.classList.contains('tapped');
+            document.querySelectorAll('.platform-card.tapped').forEach(c => c.classList.remove('tapped'));
+            if (!wasOpen) card.classList.add('tapped');
+        }
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.platform-card')) {
+                document.querySelectorAll('.platform-card.tapped').forEach(c => c.classList.remove('tapped'));
+            }
+        });
+
+        /* ── CONFIG ── */
+        const ytIds     = ['yt1', 'yt2', 'yt4', 'yt5'];
+        const nativeIds = ['yt3'];
+        const allIds    = [...ytIds, ...nativeIds];
+
+        /* ── MUTE STATE (default: muted) ── */
+        const muteState = {};
+
+        /* ── YOUTUBE POSTMESSAGE COMMAND ── */
+        function ytCmd(id, func) {
+            const el = document.getElementById(id);
+            if (!el || el.tagName !== 'IFRAME') return;
+            el.contentWindow.postMessage(
+                JSON.stringify({ event: 'command', func, args: [] }), '*'
+            );
+        }
+
+        /* ── PLAY / PAUSE any video (iframe or native) ── */
+        function playVideo(id) {
+            if (nativeIds.includes(id)) {
+                const v = document.getElementById(id);
+                if (v) v.play();
+            } else {
+                ytCmd(id, 'playVideo');
+                muteState[id] === false ? ytCmd(id, 'unMute') : ytCmd(id, 'mute');
+            }
+        }
+        function pauseVideo(id) {
+            if (nativeIds.includes(id)) {
+                const v = document.getElementById(id);
+                if (v) v.pause();
+            } else {
+                ytCmd(id, 'pauseVideo');
+            }
+        }
+
+        /* ── MUTE BUTTON — YouTube iframes ── */
+        function toggleMute(btn, id) {
+            const currentlyMuted = muteState[id] !== false;
+            const icon = btn.querySelector('i');
+            if (currentlyMuted) {
+                ytCmd(id, 'unMute');
+                muteState[id] = false;
+                icon.className = 'fas fa-volume-up';
+                btn.classList.add('unmuted');
+                btn.title = 'Mute';
+            } else {
+                ytCmd(id, 'mute');
+                muteState[id] = true;
+                icon.className = 'fas fa-volume-mute';
+                btn.classList.remove('unmuted');
+                btn.title = 'Unmute';
+            }
+        }
+
+        /* ── MUTE BUTTON — HTML5 native video ── */
+        function toggleMuteVideo(btn, id) {
+            const v = document.getElementById(id);
+            if (!v) return;
+            const icon = btn.querySelector('i');
+            if (v.muted) {
+                v.muted = false;
+                muteState[id] = false;
+                icon.className = 'fas fa-volume-up';
+                btn.classList.add('unmuted');
+                btn.title = 'Mute';
+            } else {
+                v.muted = true;
+                muteState[id] = true;
+                icon.className = 'fas fa-volume-mute';
+                btn.classList.remove('unmuted');
+                btn.title = 'Unmute';
+            }
+        }
+
+        /* ── SMART PLAY/PAUSE ON SCROLL ── */
+        const videoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const id = entry.target.id;
+                if (entry.isIntersecting) {
+                    allIds.forEach(vid => { if (vid !== id) pauseVideo(vid); });
+                    playVideo(id);
+                } else {
+                    pauseVideo(id);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        window.addEventListener('load', () => {
+            allIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) videoObserver.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

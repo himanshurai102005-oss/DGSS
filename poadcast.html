@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DGS STUDIO | PREMIUM PRODUCTION SUITE</title>
+    <link rel="icon" type="image/x-icon" href="Screenshot 2026-03-20 145338.png">
+    <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root { 
+            --accent: #7030EF; 
+            --bg: #050505;
+            --card-bg: #0c0c0c;
+            --border: rgba(255,255,255,0.1);
+            --section-gap: 120px;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; cursor: none; }
+        body { background: var(--bg); color:white; font-family: 'General Sans', sans-serif; overflow-x: hidden; }
+
+        #cursor {
+            width: 12px; height: 12px; background: white; border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 10000;
+            mix-blend-mode: difference; transition: transform 0.1s;
+        }
+
+        /* Hero Section */
+        .studio-hero { text-align: center; padding: 160px 5% 80px; }
+        .studio-hero h1 { font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 800; text-transform: uppercase; line-height: 1.1; }
+        .studio-hero span { color: var(--accent); }
+
+        /* Section Styling */
+        .section { padding: var(--section-gap) 8%; }
+        .section-title { font-size: 2.5rem; margin-bottom: 50px; font-weight: 800; text-transform: uppercase; text-align: center; }
+        .section-title span { color: var(--accent); }
+
+        /* Grid */
+        .grid-container { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 35px; margin-bottom: 35px;
+        }
+
+        .card-item { 
+            position: relative; height: 350px; border-radius: 24px; overflow: hidden; 
+            border: 1px solid var(--border); background: var(--card-bg); 
+            transition: 0.4s; cursor: zoom-in !important;
+        }
+        .card-item:hover { border-color: var(--accent); transform: translateY(-10px); }
+        .card-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; opacity: 0.6; }
+        .card-item:hover img { transform: scale(1.05); opacity: 1; }
+        
+        .gear-img { object-fit: contain !important; padding: 35px; background: #000; }
+
+        .card-item .label { 
+            position: absolute; bottom: 0; width: 100%; 
+            background: linear-gradient(transparent, rgba(0,0,0,0.95)); 
+            color: white; padding: 25px 20px; text-align: center;
+        }
+
+        /* WhatsApp Button */
+        .whatsapp-float {
+            position: fixed; width: 65px; height: 65px; bottom: 35px; right: 35px;
+            background-color: #25d366; color: #FFF; border-radius: 50%;
+            text-align: center; font-size: 32px; box-shadow: 0px 8px 25px rgba(37, 211, 102, 0.4);
+            z-index: 9999; display: flex; align-items: center; justify-content: center;
+            text-decoration: none; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .whatsapp-float:hover { transform: scale(1.1) rotate(5deg); background-color: #1ebc57; }
+
+        /* Lightbox (Desktop Only) */
+        .lightbox {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            display: none; justify-content: center; align-items: center;
+            z-index: 10001; padding: 40px; cursor: zoom-out; backdrop-filter: blur(15px);
+        }
+        .lightbox img { max-width: 90%; max-height: 85vh; border-radius: 15px; border: 1px solid var(--accent); }
+
+        /* Gear Posters & Specs */
+        .gear-poster { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; 
+            background: #0a0a0a; padding: 60px; border-radius: 40px; margin-bottom: 50px;
+            border: 1px solid var(--border);
+        }
+        .gear-poster.reverse { direction: rtl; }
+        .gear-poster.reverse .gear-text { direction: ltr; }
+        .gear-img-large { width: 100%; border-radius: 30px; border: 1px solid var(--accent); }
+        .gear-text h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 20px; }
+        
+        .spec-list { list-style: none; margin: 20px 0; }
+        .spec-list li { margin-bottom: 12px; color: #bbb; display: flex; align-items: center; font-size: 1.1rem; }
+        .spec-list li i { color: var(--accent); margin-right: 15px; font-size: 1.2rem; }
+
+        /* CTA */
+        .cta { text-align: center; padding: 140px 5%; background: linear-gradient(to top, #110625, #050505); }
+        .book-btn { 
+            background: var(--accent); color: white; padding: 22px 55px; border-radius: 50px; 
+            text-decoration: none; font-weight: 800; font-size: 1.3rem; display: inline-block;
+            box-shadow: 0 10px 30px rgba(112, 48, 239, 0.3); transition: 0.3s;
+        }
+        .book-btn:hover { transform: scale(1.05); background: #fff; color: #000; }
+
+        /* MOBILE FIXES */
+        @media (max-width: 768px) {
+            * { cursor: auto !important; }
+            #cursor { display: none; }
+            :root { --section-gap: 60px; }
+            .grid-container { gap: 20px; }
+            .card-item { height: auto; border: none; background: transparent; cursor: default !important; }
+            .card-item img { opacity: 1; border-radius: 16px; height: auto; position: relative; }
+            .card-item .label { display: none; }
+            .gear-poster, .gear-poster.reverse { grid-template-columns: 1fr; direction: ltr; padding: 25px; gap: 25px; }
+            .whatsapp-float { width: 55px; height: 55px; bottom: 20px; right: 20px; font-size: 28px; }
+            .gear-text h2 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <img src="" id="lightboxImg">
+    </div>
+
+    <a href="https://wa.me/919211992014?text=Hello%20DGS%20Studio!%20I%20am%20interested%20in%20booking%20a%20shoot%20with%20your%20Lumix%20S5IIX%20setup." 
+       class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <section class="studio-hero">
+        <h1>THE <span>ARCHITECTS</span> OF CONTENT</h1>
+        <p style="color:#888; margin-top:20px; font-size: 1.2rem;">Premium production suite engineered for visual excellence.</p>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">01. CURATED <span>ENVIRONMENTS</span></h2>
+        <div class="grid-container">
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/STUDIO.jpg.jpeg"><div class="label"><h4>Click To Zoom</h4><p>The "Executive Studio" Look</p></div></div>
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/ChatGPT Image Mar 12, 2026, 06_59_11 PM.png"><div class="label"><h4>Click To Zoom</h4><p>Classic Loft Feel</p></div></div>
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/roy21.jpeg"><div class="label"><h4>Click To Zoom</h4><p>Modern Minimalist Luxury</p></div></div>
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/ChatGPT Image Mar 13, 2026, 07_10_33 PM.png"><div class="label"><h4>Click To Zoom</h4><p>Corporate Professional</p></div></div>
+        </div>
+        <div class="grid-container">
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/ajj.png"><div class="label"><h4>Click To Zoom</h4><p>Podcast Production Hub</p></div></div>
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/akk.png"><div class="label"><h4>Click To Zoom</h4><p>Dynamic Lighting Setup</p></div></div>
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/ip.png"><div class="label"><h4>Click To Zoom</h4><p>Custom Set Design</p></div></div>
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/lo.png"><div class="label"><h4>Click To Zoom</h4><p>Creative Studio Space</p></div></div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="gear-poster">
+            <img src="imgs/rawmic.png" class="gear-img-large">
+            <div class="gear-text">
+                <h2>Acoustic Perfection: <span>Crystal Clarity</span></h2>
+                <p style="color:#888;">Broadcast-quality mics for that crisp, professional sonic experience.</p>
+            </div>
+        </div>
+        <div class="grid-container">
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/71LYHO3+wnL.jpg" class="gear-img"><div class="label"><h4>Click To Zoom</h4><p>Shure Industry Standard</p></div></div>
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/Shure-SM7B.jpg" class="gear-img"><div class="label"><h4>Click To Zoom</h4><p>Studio-Grade Transparency</p></div></div>
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/mic" class="gear-img"><div class="label"><h4>Click To Zoom</h4><p>Our Professional Mic Setup</p></div></div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="gear-poster reverse">
+            <img src="imgs/ip.png" class="gear-img-large">
+            <div class="gear-text">
+                <h2>Visual Mastery: <span>Panasonic Lumix S5IIX</span></h2>
+                <ul class="spec-list">
+                    <li><i class="fas fa-circle-check"></i> 24MP Full-Frame CMOS Sensor Performance</li>
+                    <li><i class="fas fa-circle-check"></i> Phase Detect Hybrid Autofocus System</li>
+                    <li><i class="fas fa-circle-check"></i> 6K and 4K Cinematic Video Recording</li>
+                    <li><i class="fas fa-circle-check"></i> 5-Axis Sensor Shift Stabilization System</li>
+                    <li><i class="fas fa-circle-check"></i> Dual SD Card Slot Storage Support</li>
+                </ul>
+            </div>
+        </div>
+        <div class="grid-container">
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/dc-s5m2xkgw_info_1_2dymubohbnoo3vmr.webp" class="gear-img"><div class="label"><h4>Click To Zoom</h4><p>Lumix S5IIX Engine</p></div></div>
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/S5IIX_S-R2060_bodttop_K.webp" class="gear-img"><div class="label"><h4>Click To Zoom</h4><p>Panasonic S-Series Body</p></div></div>
+            <div class="card-item" onclick="handleCardClick(this)"><img src="imgs/lp.jpg" class="gear-img"><div class="label"><h4>Click To Zoom</h4><p>4K Cinematic Workflow</p></div></div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <h2 style="font-size:3rem; margin-bottom:40px;">READY TO <span>SCALE YOUR CONTENT?</span></h2>
+        <a href="https://wa.me/919211992014?text=Hello%20DGS%20Studio!%20I%20am%20interested%20in%20booking%20a%20shoot." class="book-btn">SECURE YOUR STUDIO SESSION</a>
+    </section>
+
+    <script>
+        const cursor = document.getElementById("cursor");
+        document.addEventListener("mousemove", (e) => {
+            cursor.style.left = e.clientX + "px";
+            cursor.style.top = e.clientY + "px";
+        });
+
+        document.querySelectorAll('a, .card-item, .whatsapp-float').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.style.transform = "scale(4)");
+            el.addEventListener('mouseleave', () => cursor.style.transform = "scale(1)");
+        });
+
+        const lightbox = document.getElementById("lightbox");
+        const lightboxImg = document.getElementById("lightboxImg");
+
+        function handleCardClick(element) {
+            if (window.innerWidth > 768) {
+                const imgSrc = element.querySelector('img').src;
+                lightboxImg.src = imgSrc;
+                lightbox.style.display = "flex";
+                document.body.style.overflow = "hidden";
+            }
+        }
+
+        function closeLightbox() {
+            lightbox.style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+    </script>
+</body>
+</html>
